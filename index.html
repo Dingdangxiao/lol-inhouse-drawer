@@ -342,6 +342,74 @@
       </form>
     </dialog>
 
+    <dialog class="save-dialog share-dialog" id="shareDialog" aria-labelledby="shareDialogTitle">
+      <div class="save-dialog-form">
+        <div class="dialog-heading">
+          <p class="eyebrow">SHARE ROSTER</p>
+          <h2 id="shareDialogTitle">共享这份名单</h2>
+          <p>链接只包含这份存档的名称和 6 位玩家，不会公开其他存档。</p>
+        </div>
+
+        <div class="share-summary">
+          <strong id="shareArchiveName"></strong>
+          <p id="shareArchivePlayers"></p>
+        </div>
+
+        <label class="archive-name-field" for="shareLinkInput">
+          <span>分享链接</span>
+        </label>
+        <div class="share-link-row">
+          <input id="shareLinkInput" type="text" readonly aria-label="名单分享链接" />
+          <button class="dialog-save-button share-link-copy" id="copyShareLinkButton" type="button">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="8" y="8" width="13" height="13" rx="2" />
+              <path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" />
+            </svg>
+            <span>复制</span>
+          </button>
+        </div>
+
+        <div class="dialog-actions">
+          <button class="dialog-cancel-button" id="closeShareDialogButton" type="button">
+            关闭
+          </button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog
+      class="save-dialog share-import-dialog"
+      id="shareImportDialog"
+      aria-labelledby="shareImportTitle"
+    >
+      <div class="save-dialog-form">
+        <div class="dialog-heading">
+          <p class="eyebrow">SHARED ROSTER</p>
+          <h2 id="shareImportTitle">收到一份共享名单</h2>
+          <p>可以将它保存到本机存档，也可以只用于这次分队。</p>
+        </div>
+
+        <div class="share-summary">
+          <strong id="sharedArchiveName"></strong>
+          <p id="sharedArchivePlayers"></p>
+        </div>
+
+        <p class="dialog-error" id="shareImportError" role="alert"></p>
+
+        <div class="dialog-actions share-import-actions">
+          <button class="dialog-cancel-button" id="dismissSharedRosterButton" type="button">
+            取消
+          </button>
+          <button class="share-import-only" id="loadSharedRosterButton" type="button">
+            仅调取
+          </button>
+          <button class="dialog-save-button" id="saveSharedRosterButton" type="button">
+            保存并调取
+          </button>
+        </div>
+      </div>
+    </dialog>
+
     <div class="toast" id="toast" role="status" aria-live="polite">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="m5 12 4 4L19 6" />

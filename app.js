@@ -29,6 +29,19 @@ const archiveNameInput = document.querySelector("#archiveName");
 const dialogRosterPreview = document.querySelector("#dialogRosterPreview");
 const dialogError = document.querySelector("#dialogError");
 const cancelSaveButton = document.querySelector("#cancelSaveButton");
+const shareDialog = document.querySelector("#shareDialog");
+const shareArchiveName = document.querySelector("#shareArchiveName");
+const shareArchivePlayers = document.querySelector("#shareArchivePlayers");
+const shareLinkInput = document.querySelector("#shareLinkInput");
+const copyShareLinkButton = document.querySelector("#copyShareLinkButton");
+const closeShareDialogButton = document.querySelector("#closeShareDialogButton");
+const shareImportDialog = document.querySelector("#shareImportDialog");
+const sharedArchiveName = document.querySelector("#sharedArchiveName");
+const sharedArchivePlayers = document.querySelector("#sharedArchivePlayers");
+const shareImportError = document.querySelector("#shareImportError");
+const dismissSharedRosterButton = document.querySelector("#dismissSharedRosterButton");
+const loadSharedRosterButton = document.querySelector("#loadSharedRosterButton");
+const saveSharedRosterButton = document.querySelector("#saveSharedRosterButton");
 
 let lastSplit = "";
 let currentResult = null;
@@ -37,6 +50,7 @@ let toastTimer = null;
 let savedRosters = [];
 let activeArchiveId = "";
 let pendingArchivePlayers = [];
+let pendingSharedArchive = null;
 
 function normalizeName(value) {
   return value.trim().replace(/\s+/g, " ");
@@ -51,6 +65,82 @@ function rosterSignature(names) {
     .map((name) => normalizeName(name).toLocaleLowerCase("zh-CN"))
     .sort((a, b) => a.localeCompare(b, "zh-CN"))
     .join("\u0000");
+}
+
+function encodeSharePayload(payload) {
+  const bytes = new TextEncoder().encode(JSON.stringify(payload));
+  let binary = "";
+
+  bytes.forEach((byte) => {
+    binary += String.fromCharCode(byte);
+  });
+
+  return btoa(binary)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+}
+
+function decodeSharePayload(value) {
+  const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, "=");
+  const binary = atob(padded);
+  const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+
+function buildShareLink(archive) {
+  const url = new URL(window.location.href);
+  url.hash = `share=${encodeSharePayload({
+    v: 1,
+    n: archive.name,
+    p: archive.players,
+  })}`;
+  return url.href;
+}
+
+function readSharedArchiveFromHash() {
+  const value = new URLSearchParams(window.location.hash.slice(1)).get("share");
+
+  if (!value || value.length > 2048) {
+    return null;
+  }
+
+  try {
+    const payload = decodeSharePayload(value);
+    const name = normalizeName(String(payload?.n || "")).slice(0, 24);
+    const players = Array.isArray(payload?.p)
+      ? payload.p.map((player) => normalizeName(String(player)))
+      : [];
+    const uniquePlayers = new Set(
+      players.map((player) => player.toLocaleLowerCase("zh-CN"))
+    );
+
+    if (
+      payload?.v !== 1 ||
+      !name ||
+      players.length !== 6 ||
+      players.some((player) => !player || player.length > 16) ||
+      uniquePlayers.size !== 6
+    ) {
+      return null;
+    }
+
+    return { name, players };
+  } catch {
+    return null;
+  }
+}
+
+function clearShareHash() {
+  if (!new URLSearchParams(window.location.hash.slice(1)).has("share")) {
+    return;
+  }
+
+  const url = new URL(window.location.href);
+  url.hash = "";
+  window.history.replaceState(null, "", url);
 }
 
 function randomInteger(maxExclusive) {
@@ -393,6 +483,7 @@ function createArchiveItem(archive, isCurrent) {
   const preview = document.createElement("p");
   const actions = document.createElement("div");
   const loadButton = document.createElement("button");
+  const shareButton = document.createElement("button");
   const deleteButton = document.createElement("button");
 
   item.className = "archive-item";
@@ -417,6 +508,20 @@ function createArchiveItem(archive, isCurrent) {
   loadButton.setAttribute("aria-label", `调取存档：${archive.name}`);
   loadButton.addEventListener("click", () => loadArchive(archive.id));
 
+  shareButton.type = "button";
+  shareButton.className = "archive-share-button";
+  shareButton.setAttribute("aria-label", `分享存档：${archive.name}`);
+  shareButton.title = "分享存档";
+  shareButton.innerHTML = `
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="18" cy="5" r="3" />
+      <circle cx="6" cy="12" r="3" />
+      <circle cx="18" cy="19" r="3" />
+      <path d="m8.6 10.5 6.8-4M8.6 13.5l6.8 4" />
+    </svg>
+  `;
+  shareButton.addEventListener("click", () => openShareDialog(archive.id));
+
   deleteButton.type = "button";
   deleteButton.className = "archive-delete-button";
   deleteButton.setAttribute("aria-label", `删除存档：${archive.name}`);
@@ -433,7 +538,7 @@ function createArchiveItem(archive, isCurrent) {
 
   titleRow.append(name, time);
   copy.append(titleRow, preview);
-  actions.append(loadButton, deleteButton);
+  actions.append(loadButton, shareButton, deleteButton);
   item.append(copy, actions);
   return item;
 }
@@ -456,6 +561,132 @@ function renderArchives() {
       return createArchiveItem(archive, isCurrent);
     })
   );
+}
+
+function openShareDialog(archiveId) {
+  const archive = savedRosters.find((item) => item.id === archiveId);
+  if (!archive) {
+    return;
+  }
+
+  shareArchiveName.textContent = archive.name;
+  shareArchivePlayers.textContent = archive.players.join(" · ");
+  shareLinkInput.value = buildShareLink(archive);
+  shareDialog.showModal();
+
+  window.requestAnimationFrame(() => {
+    shareLinkInput.focus();
+    shareLinkInput.select();
+  });
+}
+
+function applyRosterToForm(players, archiveName, archiveId = "") {
+  inputs.forEach((input, index) => {
+    input.value = players[index];
+  });
+  lastSplit = "";
+  updateFormState();
+  resetResult();
+  activeArchiveId = archiveId;
+  renderArchives();
+  formMessage.textContent = `已调取存档「${archiveName}」`;
+  formMessage.classList.remove("is-error");
+}
+
+function createUniqueSharedName(baseName) {
+  const usedNames = new Set(
+    savedRosters.map((archive) => archive.name.toLocaleLowerCase("zh-CN"))
+  );
+
+  if (!usedNames.has(baseName.toLocaleLowerCase("zh-CN"))) {
+    return baseName;
+  }
+
+  let suffixNumber = 1;
+  let candidate = "";
+
+  do {
+    const suffix =
+      suffixNumber === 1 ? "（共享）" : `（共享 ${suffixNumber}）`;
+    candidate = `${baseName.slice(0, 24 - suffix.length)}${suffix}`;
+    suffixNumber += 1;
+  } while (usedNames.has(candidate.toLocaleLowerCase("zh-CN")));
+
+  return candidate;
+}
+
+function importSharedRoster(shouldSave) {
+  if (!pendingSharedArchive) {
+    return;
+  }
+
+  const shared = pendingSharedArchive;
+
+  if (!shouldSave) {
+    applyRosterToForm(shared.players, shared.name);
+    dismissSharedRoster();
+    showToast("共享名单已调取");
+    return;
+  }
+
+  const signature = rosterSignature(shared.players);
+  const existing = savedRosters.find(
+    (archive) => rosterSignature(archive.players) === signature
+  );
+
+  if (existing) {
+    applyRosterToForm(existing.players, existing.name, existing.id);
+    dismissSharedRoster();
+    showToast(`这份名单已在存档「${existing.name}」中`);
+    return;
+  }
+
+  const archive = {
+    id: createArchiveId(),
+    name: createUniqueSharedName(shared.name),
+    players: [...shared.players],
+    savedAt: Date.now(),
+  };
+  const nextRosters = [archive, ...savedRosters].slice(0, MAX_ARCHIVES);
+
+  if (!persistSavedRosters(nextRosters)) {
+    shareImportError.textContent = "本机存储不可用，请选择“仅调取”";
+    return;
+  }
+
+  savedRosters = nextRosters;
+  applyRosterToForm(archive.players, archive.name, archive.id);
+  dismissSharedRoster();
+  showToast("共享名单已保存并调取");
+}
+
+function dismissSharedRoster() {
+  pendingSharedArchive = null;
+  shareImportError.textContent = "";
+  if (shareImportDialog.open) {
+    shareImportDialog.close();
+  }
+  clearShareHash();
+}
+
+function handleIncomingSharedRoster() {
+  const params = new URLSearchParams(window.location.hash.slice(1));
+  if (!params.has("share")) {
+    return;
+  }
+
+  const shared = readSharedArchiveFromHash();
+  if (!shared) {
+    clearShareHash();
+    showToast("共享链接无效或已损坏");
+    return;
+  }
+
+  pendingSharedArchive = shared;
+  sharedArchiveName.textContent = shared.name;
+  sharedArchivePlayers.textContent = shared.players.join(" · ");
+  shareImportError.textContent = "";
+  shareImportDialog.showModal();
 }
 
 function openSaveDialog() {
@@ -544,16 +775,7 @@ function loadArchive(archiveId) {
     return;
   }
 
-  inputs.forEach((input, index) => {
-    input.value = archive.players[index];
-  });
-  lastSplit = "";
-  updateFormState();
-  resetResult();
-  activeArchiveId = archive.id;
-  renderArchives();
-  formMessage.textContent = `已调取存档「${archive.name}」`;
-  formMessage.classList.remove("is-error");
+  applyRosterToForm(archive.players, archive.name, archive.id);
   showToast(`已调取「${archive.name}」`);
 }
 
@@ -594,17 +816,10 @@ function buildCopyText(result) {
   ].join("\n");
 }
 
-async function copyResult() {
-  if (!currentResult) {
-    return;
-  }
-
-  const text = buildCopyText(currentResult);
-  let copied = false;
-
+async function writeToClipboard(text) {
   try {
     await navigator.clipboard.writeText(text);
-    copied = true;
+    return true;
   } catch {
     const textarea = document.createElement("textarea");
     textarea.value = text;
@@ -613,9 +828,19 @@ async function copyResult() {
     textarea.style.opacity = "0";
     document.body.append(textarea);
     textarea.select();
-    copied = document.execCommand("copy");
+    const copied = document.execCommand("copy");
     textarea.remove();
+    return copied;
   }
+}
+
+async function copyResult() {
+  if (!currentResult) {
+    return;
+  }
+
+  const text = buildCopyText(currentResult);
+  const copied = await writeToClipboard(text);
 
   if (copied) {
     showToast("对阵已复制");
@@ -623,6 +848,15 @@ async function copyResult() {
   }
 
   showToast("复制失败，请手动选择名单");
+}
+
+async function copyShareLink() {
+  if (!shareLinkInput.value) {
+    return;
+  }
+
+  const copied = await writeToClipboard(shareLinkInput.value);
+  showToast(copied ? "分享链接已复制" : "复制失败，请手动选择链接");
 }
 
 function showToast(message) {
@@ -690,8 +924,44 @@ saveDialog.addEventListener("close", () => {
   dialogError.textContent = "";
 });
 
+copyShareLinkButton.addEventListener("click", copyShareLink);
+
+closeShareDialogButton.addEventListener("click", () => {
+  shareDialog.close();
+});
+
+shareDialog.addEventListener("click", (event) => {
+  if (event.target === shareDialog) {
+    shareDialog.close();
+  }
+});
+
+shareDialog.addEventListener("close", () => {
+  shareLinkInput.value = "";
+});
+
+dismissSharedRosterButton.addEventListener("click", dismissSharedRoster);
+loadSharedRosterButton.addEventListener("click", () => importSharedRoster(false));
+saveSharedRosterButton.addEventListener("click", () => importSharedRoster(true));
+
+shareImportDialog.addEventListener("click", (event) => {
+  if (event.target === shareImportDialog) {
+    dismissSharedRoster();
+  }
+});
+
+shareImportDialog.addEventListener("close", () => {
+  if (pendingSharedArchive) {
+    pendingSharedArchive = null;
+    clearShareHash();
+  }
+});
+
+window.addEventListener("hashchange", handleIncomingSharedRoster);
+
 copyButton.addEventListener("click", copyResult);
 
 savedRosters = loadSavedRosters();
 restoreNames();
 updateFormState();
+handleIncomingSharedRoster();
