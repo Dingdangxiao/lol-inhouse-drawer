@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="为六人英雄联盟自定义内战随机分配两支三人队伍。"
+    />
+    <meta name="theme-color" content="#0b0d11" />
+    <title>峡谷分队 | 六人内战随机分组</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="page-grain" aria-hidden="true"></div>
+
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="峡谷分队首页">
+          <span class="brand-mark" aria-hidden="true">
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+          </span>
+          <span class="brand-copy">
+            <span class="overline">IN-HOUSE RANDOMIZER</span>
+            <span class="brand-name">峡谷分队</span>
+          </span>
+        </a>
+
+        <div class="format-badge" aria-label="3 对 3 六人赛">
+          <span>3</span>
+          <i>VS</i>
+          <span>3</span>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="setup-panel" aria-labelledby="roster-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">ROSTER / 01</p>
+              <h1 id="roster-title">今晚内战名单</h1>
+            </div>
+            <div class="heading-actions">
+              <span class="roster-count" id="rosterCount">0 / 6</span>
+              <button class="text-button" id="clearButton" type="button">
+                清空名单
+              </button>
+            </div>
+          </div>
+
+          <form id="rosterForm" novalidate>
+            <div class="player-grid">
+              <label class="player-field">
+                <span class="player-index">01</span>
+                <span class="input-wrap">
+                  <input
+                    type="text"
+                    name="player"
+                    maxlength="16"
+                    placeholder="输入玩家昵称"
+                    autocomplete="off"
+                    spellcheck="false"
+                    aria-label="玩家 1 昵称"
+                  />
+                  <span class="input-check" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="m5 12 4 4L19 6" />
+                    </svg>
+                  </span>
+                </span>
+              </label>
+
+              <label class="player-field">
+                <span class="player-index">02</span>
+                <span class="input-wrap">
+                  <input
+                    type="text"
+                    name="player"
+                    maxlength="16"
+                    placeholder="输入玩家昵称"
+                    autocomplete="off"
+                    spellcheck="false"
+                    aria-label="玩家 2 昵称"
+                  />
+                  <span class="input-check" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="m5 12 4 4L19 6" />
+                    </svg>
+                  </span>
+                </span>
+              </label>
+
+              <label class="player-field">
+                <span class="player-index">03</span>
+                <span class="input-wrap">
+                  <input
+                    type="text"
+                    name="player"
+                    maxlength="16"
+                    placeholder="输入玩家昵称"
+                    autocomplete="off"
+                    spellcheck="false"
+                    aria-label="玩家 3 昵称"
+                  />
+                  <span class="input-check" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="m5 12 4 4L19 6" />
+                    </svg>
+                  </span>
+                </span>
+              </label>
+
+              <label class="player-field">
+                <span class="player-index">04</span>
+                <span class="input-wrap">
+                  <input
+                    type="text"
+                    name="player"
+                    maxlength="16"
+                    placeholder="输入玩家昵称"
+                    autocomplete="off"
+                    spellcheck="false"
+                    aria-label="玩家 4 昵称"
+                  />
+                  <span class="input-check" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="m5 12 4 4L19 6" />
+                    </svg>
+                  </span>
+                </span>
+              </label>
+
+              <label class="player-field">
+                <span class="player-index">05</span>
+                <span class="input-wrap">
+                  <input
+                    type="text"
+                    name="player"
+                    maxlength="16"
+                    placeholder="输入玩家昵称"
+                    autocomplete="off"
+                    spellcheck="false"
+                    aria-label="玩家 5 昵称"
+                  />
+                  <span class="input-check" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="m5 12 4 4L19 6" />
+                    </svg>
+                  </span>
+                </span>
+              </label>
+
+              <label class="player-field">
+                <span class="player-index">06</span>
+                <span class="input-wrap">
+                  <input
+                    type="text"
+                    name="player"
+                    maxlength="16"
+                    placeholder="输入玩家昵称"
+                    autocomplete="off"
+                    spellcheck="false"
+                    aria-label="玩家 6 昵称"
+                  />
+                  <span class="input-check" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="m5 12 4 4L19 6" />
+                    </svg>
+                  </span>
+                </span>
+              </label>
+            </div>
+
+            <section class="roster-shelf" aria-labelledby="archive-title">
+              <div class="shelf-heading">
+                <div>
+                  <p class="eyebrow">ROSTER ARCHIVE</p>
+                  <h2 id="archive-title">
+                    名单存档
+                    <span class="shelf-count" id="savedRosterCount">0</span>
+                  </h2>
+                </div>
+                <button
+                  class="save-roster-button"
+                  id="saveRosterButton"
+                  type="button"
+                  disabled
+                >
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <rect x="2" y="3" width="20" height="5" rx="1" />
+                    <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8" />
+                    <path d="M10 12h4" />
+                  </svg>
+                  <span>保存当前名单</span>
+                </button>
+              </div>
+
+              <div class="archive-empty" id="archiveEmpty">
+                <span class="empty-archive-mark" aria-hidden="true"></span>
+                <p>还没有已保存的名单</p>
+              </div>
+              <ul class="archive-list" id="archiveList" hidden></ul>
+            </section>
+
+            <div class="form-footer">
+              <p class="form-message" id="formMessage" role="status" aria-live="polite">
+                填满 6 个昵称后即可开始
+              </p>
+              <button class="draw-button" id="drawButton" type="submit">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M2 18h1.4a4 4 0 0 0 3.3-1.7l6.1-8.6A4 4 0 0 1 16.1 6H22" />
+                  <path d="m18 2 4 4-4 4" />
+                  <path d="M2 6h1.9a4 4 0 0 1 3.4 1.9" />
+                  <path d="M22 18h-5.9a4 4 0 0 1-3.3-1.7l-.5-.7" />
+                  <path d="m18 14 4 4-4 4" />
+                </svg>
+                <span>随机分队</span>
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section class="result-panel" aria-labelledby="result-title">
+          <div class="section-heading result-heading">
+            <div>
+              <p class="eyebrow">MATCHUP / 02</p>
+              <h2 id="result-title">本局对阵</h2>
+            </div>
+            <button
+              class="copy-button"
+              id="copyButton"
+              type="button"
+              aria-label="复制对阵结果"
+              disabled
+            >
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="8" y="8" width="13" height="13" rx="2" />
+                <path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" />
+              </svg>
+              <span>复制结果</span>
+            </button>
+          </div>
+
+          <div class="result-stage">
+            <div class="empty-state" id="emptyState">
+              <div class="empty-score" aria-hidden="true">
+                <span>3</span>
+                <i></i>
+                <span>3</span>
+              </div>
+              <p>等待名单</p>
+            </div>
+
+            <div class="teams-grid" id="teamsGrid" hidden>
+              <article class="team-card team-card--blue">
+                <header class="team-header">
+                  <span class="team-side">BLUE SIDE</span>
+                  <h3>蓝方</h3>
+                  <span class="team-slot">TEAM A</span>
+                </header>
+                <ol class="team-roster" id="blueRoster"></ol>
+                <footer class="team-footer">
+                  <span>3 PLAYERS</span>
+                  <span class="team-line" aria-hidden="true"></span>
+                </footer>
+              </article>
+
+              <div class="versus-mark" aria-hidden="true">
+                <span></span>
+                <b>VS</b>
+                <span></span>
+              </div>
+
+              <article class="team-card team-card--red">
+                <header class="team-header">
+                  <span class="team-side">RED SIDE</span>
+                  <h3>红方</h3>
+                  <span class="team-slot">TEAM B</span>
+                </header>
+                <ol class="team-roster" id="redRoster"></ol>
+                <footer class="team-footer">
+                  <span>3 PLAYERS</span>
+                  <span class="team-line" aria-hidden="true"></span>
+                </footer>
+              </article>
+            </div>
+          </div>
+
+          <div class="result-footer" id="resultFooter">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span id="resultMeta" aria-live="polite">名单就绪后生成对阵</span>
+            <span class="result-code" id="resultCode" hidden></span>
+          </div>
+        </section>
+      </main>
+
+      <footer class="page-footer">
+        <span>SUMMONER'S RIFT</span>
+        <span class="footer-rule" aria-hidden="true"></span>
+        <span>6 PLAYERS · 2 TEAMS</span>
+      </footer>
+    </div>
+
+    <dialog class="save-dialog" id="saveDialog" aria-labelledby="saveDialogTitle">
+      <form class="save-dialog-form" id="saveDialogForm">
+        <div class="dialog-heading">
+          <p class="eyebrow">SAVE ROSTER</p>
+          <h2 id="saveDialogTitle">保存名单存档</h2>
+          <p>下次打开页面时可以一键调取这 6 位玩家。</p>
+        </div>
+
+        <label class="archive-name-field" for="archiveName">
+          <span>存档名称</span>
+          <input
+            id="archiveName"
+            name="archiveName"
+            type="text"
+            maxlength="24"
+            placeholder="例如：周五固定车队"
+            autocomplete="off"
+            required
+          />
+        </label>
+
+        <p class="dialog-roster-preview" id="dialogRosterPreview"></p>
+        <p class="dialog-error" id="dialogError" role="alert"></p>
+
+        <div class="dialog-actions">
+          <button class="dialog-cancel-button" id="cancelSaveButton" type="button">
+            取消
+          </button>
+          <button class="dialog-save-button" type="submit">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" />
+              <path d="M17 21v-8H7v8M7 3v5h8" />
+            </svg>
+            <span>保存存档</span>
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="m5 12 4 4L19 6" />
+      </svg>
+      <span>对阵已复制</span>
+    </div>
+  </body>
+</html>

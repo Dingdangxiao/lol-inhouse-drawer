@@ -1,0 +1,25 @@
+# 峡谷分队
+
+六人英雄联盟内战随机分队工具，支持名单存档、双方随机分组和结果复制。
+
+这是一个纯静态网页，不需要安装依赖，也不需要构建。
+
+## 使用 GitHub Pages 发布
+
+1. 登录 GitHub，新建一个 **Public** 仓库，例如 `lol-inhouse-drawer`。
+2. 将本文件夹中的 `index.html`、`styles.css`、`app.js` 上传到仓库根目录。
+3. 打开仓库的 `Settings` > `Pages`。
+4. 在 `Build and deployment` 中将 `Source` 设为 `Deploy from a branch`。
+5. 选择 `main` 分支和 `/ (root)` 目录，然后点击 `Save`。
+6. 等待约 1 到 3 分钟，在线地址通常为：
+
+   `https://你的GitHub用户名.github.io/lol-inhouse-drawer/`
+
+发布完成后，将上面的网址发给其他人即可在线打开。
+
+## 使用说明
+
+- 游戏模式为 3 对 3，共 6 位玩家。
+- 填满 6 个唯一昵称后即可随机分队。
+- 当前名单和名单存档保存在浏览器本地，不会上传到服务器。
+- 每位访问者的名单存档互相独立，不会自动同步。
