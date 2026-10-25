@@ -90,22 +90,22 @@ input:focus-visible {
 .app-shell {
   position: relative;
   z-index: 1;
-  width: min(1180px, calc(100% - 48px));
+  width: min(1320px, calc(100% - 48px));
   margin: 0 auto;
-  padding: 34px 0 24px;
+  padding: 38px 0 28px;
 }
 
 .topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 58px;
-  margin-bottom: 26px;
+  min-height: 66px;
+  margin-bottom: 30px;
 }
 
 .brand {
   display: inline-flex;
-  gap: 15px;
+  gap: 17px;
   align-items: center;
   color: inherit;
   text-decoration: none;
@@ -114,12 +114,12 @@ input:focus-visible {
 .brand-mark {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(2, 5px);
-  gap: 5px;
+  grid-template-columns: repeat(2, 6px);
+  gap: 6px;
   align-content: center;
   justify-content: center;
-  width: 46px;
-  height: 51px;
+  width: 52px;
+  height: 58px;
   border: 1px solid rgba(212, 183, 124, 0.72);
   background: linear-gradient(145deg, rgba(212, 183, 124, 0.1), rgba(8, 10, 14, 0.35));
   clip-path: polygon(50% 0, 94% 22%, 94% 74%, 50% 100%, 6% 74%, 6% 22%);
@@ -135,8 +135,8 @@ input:focus-visible {
 
 .brand-mark span {
   position: relative;
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   background: var(--gold);
   box-shadow: 0 0 10px rgba(212, 183, 124, 0.52);
 }
@@ -152,13 +152,13 @@ input:focus-visible {
   margin: 0;
   color: var(--gold);
   font-family: var(--display);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.18em;
 }
 
 .brand-name {
-  font-size: 21px;
+  font-size: 24px;
   font-weight: 700;
   letter-spacing: 0.08em;
 }
@@ -173,13 +173,13 @@ input:focus-visible {
 
 .format-badge span {
   color: var(--gold-bright);
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 600;
 }
 
 .format-badge i {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
   font-style: normal;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -188,7 +188,7 @@ input:focus-visible {
 .workspace {
   display: grid;
   grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
-  min-height: 610px;
+  min-height: 690px;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -202,7 +202,7 @@ input:focus-visible {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  padding: 32px;
+  padding: 36px;
 }
 
 .setup-panel {
@@ -225,13 +225,13 @@ input:focus-visible {
   gap: 20px;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 28px;
+  margin-bottom: 32px;
 }
 
 .section-heading h1,
 .section-heading h2 {
   margin: 7px 0 0;
-  font-size: clamp(24px, 2.6vw, 34px);
+  font-size: clamp(27px, 2.8vw, 40px);
   font-weight: 650;
   letter-spacing: 0.02em;
   line-height: 1.2;
@@ -247,7 +247,7 @@ input:focus-visible {
 .roster-count {
   color: var(--gold-bright);
   font-family: var(--display);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.09em;
 }
@@ -256,7 +256,7 @@ input:focus-visible {
   padding: 0;
   border: 0;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
   background: transparent;
   cursor: pointer;
   transition: color 160ms ease;
@@ -274,15 +274,15 @@ input:focus-visible {
 .player-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 11px;
+  gap: 12px;
 }
 
 .player-field {
   display: flex;
   align-items: center;
   min-width: 0;
-  height: 64px;
-  padding: 0 13px;
+  height: 72px;
+  padding: 0 15px;
   border: 1px solid var(--line);
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.018);
@@ -312,10 +312,10 @@ input:focus-visible {
 }
 
 .player-index {
-  flex: 0 0 24px;
+  flex: 0 0 26px;
   color: #5f6670;
   font-family: var(--display);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.08em;
 }
@@ -331,11 +331,11 @@ input:focus-visible {
 .player-field input {
   width: 100%;
   min-width: 0;
-  padding: 0 27px 0 0;
+  padding: 0 29px 0 0;
   border: 0;
   outline: 0;
   color: var(--text);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 560;
   background: transparent;
 }
@@ -349,8 +349,8 @@ input:focus-visible {
   position: absolute;
   right: 0;
   display: grid;
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
   place-items: center;
   border: 1px solid rgba(87, 179, 207, 0.18);
   border-radius: 50%;
@@ -376,8 +376,8 @@ input:focus-visible {
 }
 
 .roster-shelf {
-  margin-top: 22px;
-  padding-top: 20px;
+  margin-top: 26px;
+  padding-top: 22px;
   border-top: 1px solid var(--line);
 }
 
@@ -393,22 +393,22 @@ input:focus-visible {
   gap: 8px;
   align-items: center;
   margin: 5px 0 0;
-  font-size: 17px;
+  font-size: 19px;
   font-weight: 650;
   letter-spacing: 0.03em;
 }
 
 .shelf-count {
   display: inline-grid;
-  min-width: 20px;
-  height: 20px;
+  min-width: 22px;
+  height: 22px;
   padding: 0 6px;
   place-items: center;
   border: 1px solid rgba(212, 183, 124, 0.24);
   border-radius: 10px;
   color: var(--gold);
   font-family: var(--display);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 600;
 }
 
@@ -417,12 +417,12 @@ input:focus-visible {
   flex: 0 0 auto;
   gap: 7px;
   align-items: center;
-  min-height: 34px;
-  padding: 0 11px;
+  min-height: 38px;
+  padding: 0 13px;
   border: 1px solid var(--line);
   border-radius: 5px;
   color: #b7bdc4;
-  font-size: 11px;
+  font-size: 12px;
   background: rgba(255, 255, 255, 0.022);
   cursor: pointer;
   transition:
@@ -432,8 +432,8 @@ input:focus-visible {
 }
 
 .save-roster-button svg {
-  width: 14px;
-  height: 14px;
+  width: 15px;
+  height: 15px;
   stroke: currentColor;
   stroke-width: 1.7;
   stroke-linecap: round;
@@ -453,7 +453,7 @@ input:focus-visible {
 
 .archive-empty {
   display: flex;
-  min-height: 62px;
+  min-height: 72px;
   gap: 10px;
   align-items: center;
   justify-content: center;
@@ -465,7 +465,7 @@ input:focus-visible {
 
 .archive-empty p {
   margin: 0;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .empty-archive-mark {
@@ -487,8 +487,8 @@ input:focus-visible {
 }
 
 .archive-list {
-  max-height: 184px;
-  margin: 14px 0 0;
+  max-height: 210px;
+  margin: 16px 0 0;
   padding: 0;
   overflow-x: hidden;
   overflow-y: auto;
@@ -502,10 +502,10 @@ input:focus-visible {
 .archive-item {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 12px;
+  gap: 14px;
   align-items: center;
-  min-height: 62px;
-  padding: 9px 9px 9px 12px;
+  min-height: 70px;
+  padding: 11px 10px 11px 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.055);
   background: rgba(255, 255, 255, 0.008);
   transition: background 160ms ease;
@@ -537,7 +537,7 @@ input:focus-visible {
 .archive-item-name {
   min-width: 0;
   color: var(--text);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 620;
   line-height: 1.4;
   overflow-wrap: anywhere;
@@ -547,7 +547,7 @@ input:focus-visible {
   flex: 0 0 auto;
   color: #5d646d;
   font-family: var(--display);
-  font-size: 8px;
+  font-size: 9px;
   letter-spacing: 0.05em;
 }
 
@@ -555,7 +555,7 @@ input:focus-visible {
   margin: 4px 0 0;
   overflow: hidden;
   color: #6f7680;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
@@ -567,12 +567,12 @@ input:focus-visible {
 }
 
 .archive-load-button {
-  min-height: 28px;
-  padding: 0 9px;
+  min-height: 32px;
+  padding: 0 11px;
   border: 1px solid rgba(212, 183, 124, 0.22);
   border-radius: 4px;
   color: var(--gold);
-  font-size: 10px;
+  font-size: 11px;
   background: rgba(212, 183, 124, 0.035);
   cursor: pointer;
   transition:
@@ -587,8 +587,8 @@ input:focus-visible {
 
 .archive-delete-button {
   display: grid;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   padding: 0;
   place-items: center;
   border: 1px solid transparent;
@@ -609,8 +609,8 @@ input:focus-visible {
 }
 
 .archive-delete-button svg {
-  width: 13px;
-  height: 13px;
+  width: 14px;
+  height: 14px;
   stroke: currentColor;
   stroke-width: 1.7;
   stroke-linecap: round;
@@ -619,8 +619,8 @@ input:focus-visible {
 
 .archive-share-button {
   display: grid;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   padding: 0;
   place-items: center;
   border: 1px solid transparent;
@@ -641,8 +641,8 @@ input:focus-visible {
 }
 
 .archive-share-button svg {
-  width: 13px;
-  height: 13px;
+  width: 14px;
+  height: 14px;
   stroke: currentColor;
   stroke-width: 1.7;
   stroke-linecap: round;
@@ -656,18 +656,18 @@ input:focus-visible {
 
 .form-footer {
   display: flex;
-  gap: 18px;
+  gap: 20px;
   align-items: center;
   justify-content: space-between;
   margin-top: auto;
-  padding-top: 30px;
+  padding-top: 34px;
 }
 
 .form-message {
-  max-width: 220px;
+  max-width: 260px;
   margin: 0;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.55;
 }
 
@@ -682,14 +682,14 @@ input:focus-visible {
   gap: 10px;
   align-items: center;
   justify-content: center;
-  min-width: 156px;
-  min-height: 50px;
-  padding: 0 22px;
+  min-width: 174px;
+  min-height: 58px;
+  padding: 0 24px;
   overflow: hidden;
   border: 1px solid rgba(240, 214, 155, 0.44);
   border-radius: 6px;
   color: #16130c;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: 0.04em;
   background: linear-gradient(135deg, #e4ca90, #b9985d);
@@ -731,8 +731,8 @@ input:focus-visible {
 
 .draw-button svg {
   position: relative;
-  width: 19px;
-  height: 19px;
+  width: 21px;
+  height: 21px;
   stroke: currentColor;
   stroke-width: 1.8;
   stroke-linecap: round;
@@ -755,12 +755,12 @@ input:focus-visible {
   display: inline-flex;
   gap: 7px;
   align-items: center;
-  min-height: 36px;
-  padding: 0 11px;
+  min-height: 40px;
+  padding: 0 12px;
   border: 1px solid var(--line);
   border-radius: 5px;
   color: #aab0b8;
-  font-size: 12px;
+  font-size: 13px;
   background: rgba(255, 255, 255, 0.018);
   cursor: pointer;
   transition:
@@ -770,8 +770,8 @@ input:focus-visible {
 }
 
 .copy-button svg {
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   stroke: currentColor;
   stroke-width: 1.7;
   stroke-linecap: round;
@@ -813,7 +813,7 @@ input:focus-visible {
 }
 
 .empty-score span {
-  font-size: clamp(74px, 8vw, 112px);
+  font-size: clamp(80px, 9vw, 128px);
   font-weight: 300;
   line-height: 1;
   letter-spacing: -0.04em;
@@ -829,7 +829,7 @@ input:focus-visible {
 
 .empty-state p {
   margin: 18px 0 0;
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.28em;
 }
 
@@ -852,7 +852,7 @@ input:focus-visible {
   position: relative;
   display: flex;
   min-width: 0;
-  min-height: 360px;
+  min-height: 405px;
   flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--line);
@@ -907,7 +907,7 @@ input:focus-visible {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 4px 12px;
-  padding: 23px 22px 18px;
+  padding: 27px 25px 21px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.055);
 }
 
@@ -915,7 +915,7 @@ input:focus-visible {
   grid-column: 1;
   margin: 0;
   color: var(--text);
-  font-size: 25px;
+  font-size: 30px;
   font-weight: 650;
   letter-spacing: 0.08em;
 }
@@ -924,7 +924,7 @@ input:focus-visible {
   grid-column: 1 / -1;
   color: currentColor;
   font-family: var(--display);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.22em;
 }
@@ -935,7 +935,7 @@ input:focus-visible {
   align-self: end;
   color: #5e6570;
   font-family: var(--display);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.12em;
 }
@@ -945,17 +945,17 @@ input:focus-visible {
   flex: 1;
   flex-direction: column;
   margin: 0;
-  padding: 7px 22px;
+  padding: 8px 25px;
   list-style: none;
 }
 
 .team-roster li {
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) 5px;
-  gap: 11px;
+  grid-template-columns: 28px minmax(0, 1fr) 5px;
+  gap: 12px;
   align-items: center;
-  min-height: 66px;
-  padding: 9px 0;
+  min-height: 76px;
+  padding: 10px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.055);
 }
 
@@ -966,7 +966,7 @@ input:focus-visible {
 .roster-number {
   color: currentColor;
   font-family: var(--display);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.08em;
   opacity: 0.66;
@@ -975,7 +975,7 @@ input:focus-visible {
 .roster-name {
   min-width: 0;
   color: var(--text);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 620;
   line-height: 1.45;
   letter-spacing: 0.015em;
@@ -994,10 +994,10 @@ input:focus-visible {
   display: flex;
   gap: 10px;
   align-items: center;
-  padding: 15px 22px 19px;
+  padding: 18px 25px 22px;
   color: #5e6570;
   font-family: var(--display);
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.16em;
 }
@@ -1019,7 +1019,7 @@ input:focus-visible {
 
 .versus-mark span {
   width: 1px;
-  height: 56px;
+  height: 64px;
   background: linear-gradient(transparent, rgba(212, 183, 124, 0.32));
 }
 
@@ -1029,17 +1029,17 @@ input:focus-visible {
 
 .versus-mark b {
   font-family: var(--display);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.12em;
 }
 
 .result-footer {
   display: flex;
-  min-height: 39px;
+  min-height: 43px;
   align-items: flex-end;
   color: #686f78;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .status-dot {
@@ -1083,7 +1083,7 @@ input:focus-visible {
 }
 
 .save-dialog {
-  width: min(460px, calc(100vw - 32px));
+  width: min(520px, calc(100vw - 32px));
   max-height: calc(100vh - 32px);
   padding: 0;
   overflow: auto;
@@ -1106,12 +1106,12 @@ input:focus-visible {
 }
 
 .save-dialog-form {
-  padding: 28px;
+  padding: 32px;
 }
 
 .dialog-heading h2 {
   margin: 7px 0 8px;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 650;
   letter-spacing: 0.03em;
 }
@@ -1119,7 +1119,7 @@ input:focus-visible {
 .dialog-heading > p:last-child {
   margin: 0;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.6;
 }
 
@@ -1132,18 +1132,18 @@ input:focus-visible {
   display: block;
   margin-bottom: 8px;
   color: #b8bec6;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .archive-name-field input {
   width: 100%;
-  height: 46px;
-  padding: 0 13px;
+  height: 50px;
+  padding: 0 14px;
   border: 1px solid var(--line);
   border-radius: 5px;
   outline: 0;
   color: var(--text);
-  font-size: 13px;
+  font-size: 14px;
   background: rgba(7, 9, 13, 0.58);
   transition:
     border-color 160ms ease,
@@ -1183,7 +1183,7 @@ input:focus-visible {
 .share-summary strong {
   display: block;
   color: var(--text);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 650;
   line-height: 1.45;
   overflow-wrap: anywhere;
@@ -1192,7 +1192,7 @@ input:focus-visible {
 .share-summary p {
   margin: 5px 0 0;
   color: #858d96;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.6;
   overflow-wrap: anywhere;
 }
@@ -1206,14 +1206,14 @@ input:focus-visible {
 .share-link-row input {
   width: 100%;
   min-width: 0;
-  height: 40px;
-  padding: 0 11px;
+  height: 44px;
+  padding: 0 12px;
   border: 1px solid var(--line);
   border-radius: 5px;
   outline: 0;
   color: #aeb5be;
   font-family: var(--display);
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.02em;
   background: rgba(7, 9, 13, 0.58);
 }
@@ -1223,8 +1223,8 @@ input:focus-visible {
 }
 
 .share-link-copy {
-  min-height: 40px;
-  padding: 0 13px;
+  min-height: 44px;
+  padding: 0 14px;
 }
 
 .share-dialog .dialog-actions {
@@ -1236,12 +1236,12 @@ input:focus-visible {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 40px;
-  padding: 0 15px;
+  min-height: 44px;
+  padding: 0 17px;
   border: 1px solid rgba(87, 179, 207, 0.24);
   border-radius: 5px;
   color: var(--blue);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 620;
   background: rgba(87, 179, 207, 0.045);
   cursor: pointer;
@@ -1275,10 +1275,10 @@ input:focus-visible {
   gap: 7px;
   align-items: center;
   justify-content: center;
-  min-height: 40px;
-  padding: 0 17px;
+  min-height: 44px;
+  padding: 0 18px;
   border-radius: 5px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 620;
   cursor: pointer;
 }
@@ -1469,6 +1469,10 @@ input:focus-visible {
 
   .player-field {
     height: 58px;
+  }
+
+  .player-field input {
+    font-size: 14px;
   }
 
   .shelf-heading {
