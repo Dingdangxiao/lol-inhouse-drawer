@@ -29,6 +29,9 @@ const archiveNameInput = document.querySelector("#archiveName");
 const dialogRosterPreview = document.querySelector("#dialogRosterPreview");
 const dialogError = document.querySelector("#dialogError");
 const cancelSaveButton = document.querySelector("#cancelSaveButton");
+const saveDialogTitle = document.querySelector("#saveDialogTitle");
+const saveDialogDescription = document.querySelector("#saveDialogDescription");
+const saveDialogButtonLabel = document.querySelector("#saveDialogButtonLabel");
 const shareDialog = document.querySelector("#shareDialog");
 const shareArchiveName = document.querySelector("#shareArchiveName");
 const shareArchivePlayers = document.querySelector("#shareArchivePlayers");
@@ -49,6 +52,7 @@ let drawing = false;
 let toastTimer = null;
 let savedRosters = [];
 let activeArchiveId = "";
+let editingArchiveId = "";
 let pendingArchivePlayers = [];
 let pendingSharedArchive = null;
 
@@ -226,6 +230,9 @@ function updateFormState() {
   }
 
   saveRosterButton.disabled = drawing || completed !== 6;
+  saveRosterButton.querySelector("span").textContent = editingArchiveId
+    ? "更新当前存档"
+    : "保存当前名单";
   saveNames(names);
   renderArchives();
 }
@@ -588,6 +595,7 @@ function applyRosterToForm(players, archiveName, archiveId = "") {
   updateFormState();
   resetResult();
   activeArchiveId = archiveId;
+  editingArchiveId = archiveId;
   renderArchives();
   formMessage.textContent = `已调取存档「${archiveName}」`;
   formMessage.classList.remove("is-error");
@@ -696,6 +704,28 @@ function openSaveDialog() {
   }
 
   const signature = rosterSignature(names);
+  const editingArchive = savedRosters.find(
+    (archive) => archive.id === editingArchiveId
+  );
+
+  if (editingArchive) {
+    pendingArchivePlayers = names;
+    archiveNameInput.value = editingArchive.name;
+    dialogRosterPreview.textContent = names.join(" · ");
+    dialogError.textContent = "";
+    saveDialogTitle.textContent = "更新名单存档";
+    saveDialogDescription.textContent =
+      "保存后会覆盖当前存档，并保留它在存档列表中的位置。";
+    saveDialogButtonLabel.textContent = "更新存档";
+    saveDialog.showModal();
+
+    window.requestAnimationFrame(() => {
+      archiveNameInput.focus();
+      archiveNameInput.select();
+    });
+    return;
+  }
+
   const existing = savedRosters.find(
     (archive) => rosterSignature(archive.players) === signature
   );
@@ -711,6 +741,9 @@ function openSaveDialog() {
   archiveNameInput.value = suggestArchiveName();
   dialogRosterPreview.textContent = names.join(" · ");
   dialogError.textContent = "";
+  saveDialogTitle.textContent = "保存名单存档";
+  saveDialogDescription.textContent = "下次打开页面时可以一键调取这 6 位玩家。";
+  saveDialogButtonLabel.textContent = "保存存档";
   saveDialog.showModal();
 
   window.requestAnimationFrame(() => {
@@ -726,6 +759,43 @@ function saveArchive() {
   if (!name) {
     dialogError.textContent = "请填写存档名称";
     archiveNameInput.focus();
+    return;
+  }
+
+  const editingArchive = savedRosters.find(
+    (archive) => archive.id === editingArchiveId
+  );
+
+  if (editingArchive) {
+    const duplicateName = savedRosters.some(
+      (archive) =>
+        archive.id !== editingArchive.id &&
+        archive.name.toLocaleLowerCase("zh-CN") === name.toLocaleLowerCase("zh-CN")
+    );
+
+    if (duplicateName) {
+      dialogError.textContent = "已经有同名存档，请换一个名称";
+      archiveNameInput.focus();
+      return;
+    }
+
+    const nextRosters = savedRosters.map((archive) =>
+      archive.id === editingArchive.id
+        ? { ...archive, name, players: [...pendingArchivePlayers], savedAt: Date.now() }
+        : archive
+    );
+
+    if (!persistSavedRosters(nextRosters)) {
+      dialogError.textContent = "本机存储不可用，暂时无法更新";
+      return;
+    }
+
+    savedRosters = nextRosters;
+    activeArchiveId = editingArchive.id;
+    editingArchiveId = editingArchive.id;
+    renderArchives();
+    saveDialog.close();
+    showToast("名单存档已更新");
     return;
   }
 
@@ -801,6 +871,10 @@ function deleteArchive(archiveId) {
 
   if (activeArchiveId === archiveId) {
     activeArchiveId = "";
+  }
+
+  if (editingArchiveId === archiveId) {
+    editingArchiveId = "";
   }
 
   renderArchives();
@@ -892,6 +966,7 @@ clearButton.addEventListener("click", () => {
   inputs.forEach((input) => {
     input.value = "";
   });
+  editingArchiveId = "";
   updateFormState();
   resetResult();
   formMessage.textContent = "填满 6 个昵称后即可开始";
