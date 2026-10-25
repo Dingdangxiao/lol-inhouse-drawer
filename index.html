@@ -9,9 +9,9 @@
     />
     <meta name="theme-color" content="#0b0d11" />
     <title>峡谷分队 | 六人内战随机分组</title>
-    <link rel="stylesheet" href="styles.css?v=20261025-3" />
+    <link rel="stylesheet" href="styles.css?v=20261025-4" />
     <script src="qrcode.min.js" defer></script>
-    <script src="app.js?v=20261025-3" defer></script>
+    <script src="app.js?v=20261025-4" defer></script>
   </head>
   <body>
     <div class="page-grain" aria-hidden="true"></div>
@@ -173,6 +173,22 @@
                 </span>
               </label>
             </div>
+
+            <section class="cloud-roster" id="cloudRosterSection" hidden>
+              <div class="cloud-roster-header">
+                <p class="eyebrow">CLOUD ROSTER</p>
+                <span class="cloud-badge">云端</span>
+              </div>
+              <div class="cloud-roster-body">
+                <div class="cloud-roster-copy">
+                  <strong id="cloudRosterName"></strong>
+                  <p id="cloudRosterPlayers"></p>
+                </div>
+                <button class="cloud-load-button" id="loadCloudRosterButton" type="button">
+                  载入名单
+                </button>
+              </div>
+            </section>
 
             <section class="roster-shelf" aria-labelledby="archive-title">
               <div class="shelf-heading">
