@@ -10,7 +10,7 @@
     <meta name="theme-color" content="#0b0d11" />
     <title>峡谷分队 | 六人内战随机分组</title>
     <link rel="stylesheet" href="styles.css?v=20261025-1" />
-    <script src="app.js?v=20261025-1" defer></script>
+    <script src="app.js?v=20261025-2" defer></script>
   </head>
   <body>
     <div class="page-grain" aria-hidden="true"></div>
@@ -308,7 +308,7 @@
         <div class="dialog-heading">
           <p class="eyebrow">SAVE ROSTER</p>
           <h2 id="saveDialogTitle">保存名单存档</h2>
-          <p>下次打开页面时可以一键调取这 6 位玩家。</p>
+          <p id="saveDialogDescription">下次打开页面时可以一键调取这 6 位玩家。</p>
         </div>
 
         <label class="archive-name-field" for="archiveName">
@@ -336,7 +336,7 @@
               <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" />
               <path d="M17 21v-8H7v8M7 3v5h8" />
             </svg>
-            <span>保存存档</span>
+            <span id="saveDialogButtonLabel">保存存档</span>
           </button>
         </div>
       </form>
