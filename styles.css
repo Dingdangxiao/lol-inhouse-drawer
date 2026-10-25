@@ -751,6 +751,13 @@ input:focus-visible {
   align-items: center;
 }
 
+.result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  justify-content: flex-end;
+}
+
 .copy-button {
   display: inline-flex;
   gap: 7px;
@@ -787,6 +794,12 @@ input:focus-visible {
 .copy-button:disabled {
   opacity: 0.34;
   cursor: not-allowed;
+}
+
+#swapButton.is-active {
+  border-color: rgba(212, 183, 124, 0.46);
+  color: var(--gold-bright);
+  background: rgba(212, 183, 124, 0.08);
 }
 
 .result-stage {
@@ -957,6 +970,20 @@ input:focus-visible {
   min-height: 76px;
   padding: 10px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+}
+
+.team-roster li.is-swappable {
+  cursor: pointer;
+}
+
+.team-roster li.is-swappable:hover {
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.team-roster li.is-selected {
+  outline: 1px solid rgba(240, 214, 155, 0.72);
+  outline-offset: -4px;
+  background: rgba(212, 183, 124, 0.1);
 }
 
 .team-roster li:last-child {
@@ -1220,6 +1247,21 @@ input:focus-visible {
 
 .share-link-row input:focus {
   border-color: rgba(212, 183, 124, 0.5);
+}
+
+.share-qr {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+}
+
+.share-qr img {
+  width: 156px;
+  height: 156px;
+  padding: 8px;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
 }
 
 .share-link-copy {
