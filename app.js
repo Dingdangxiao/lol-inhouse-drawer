@@ -25,6 +25,10 @@ const saveRosterButton = document.querySelector("#saveRosterButton");
 const savedRosterCount = document.querySelector("#savedRosterCount");
 const archiveEmpty = document.querySelector("#archiveEmpty");
 const archiveList = document.querySelector("#archiveList");
+const cloudRosterSection = document.querySelector("#cloudRosterSection");
+const cloudRosterName = document.querySelector("#cloudRosterName");
+const cloudRosterPlayers = document.querySelector("#cloudRosterPlayers");
+const loadCloudRosterButton = document.querySelector("#loadCloudRosterButton");
 const saveDialog = document.querySelector("#saveDialog");
 const saveDialogForm = document.querySelector("#saveDialogForm");
 const archiveNameInput = document.querySelector("#archiveName");
@@ -60,6 +64,7 @@ let activeArchiveId = "";
 let editingArchiveId = "";
 let pendingArchivePlayers = [];
 let pendingSharedArchive = null;
+let cloudRoster = null;
 
 function normalizeName(value) {
   return value.trim().replace(/\s+/g, " ");
@@ -707,6 +712,50 @@ function applyRosterToForm(players, archiveName, archiveId = "") {
   formMessage.classList.remove("is-error");
 }
 
+function isValidCloudRoster(roster) {
+  if (!roster || typeof roster.name !== "string" || !Array.isArray(roster.players)) {
+    return false;
+  }
+
+  const players = roster.players
+    .map((player) => normalizeName(String(player)))
+    .filter(Boolean);
+  const uniquePlayers = new Set(
+    players.map((player) => player.toLocaleLowerCase("zh-CN"))
+  );
+
+  return players.length === 6 && uniquePlayers.size === 6;
+}
+
+async function loadCloudRoster() {
+  try {
+    const response = await fetch("shared-roster.json", { cache: "no-store" });
+    if (!response.ok) {
+      return;
+    }
+
+    const roster = await response.json();
+    if (!isValidCloudRoster(roster)) {
+      return;
+    }
+
+    cloudRoster = {
+      name: normalizeName(roster.name).slice(0, 24) || "云端共享名单",
+      players: roster.players.map((player) => normalizeName(String(player)).slice(0, 16)),
+    };
+    cloudRosterSection.hidden = false;
+    cloudRosterName.textContent = cloudRoster.name;
+    cloudRosterPlayers.textContent = cloudRoster.players.join(" · ");
+
+    if (getNames().every((name) => !name)) {
+      applyRosterToForm(cloudRoster.players, cloudRoster.name);
+      formMessage.textContent = `已载入云端名单「${cloudRoster.name}」`;
+    }
+  } catch {
+    // A missing or unavailable cloud roster simply keeps the local roster unchanged.
+  }
+}
+
 function createUniqueSharedName(baseName) {
   const usedNames = new Set(
     savedRosters.map((archive) => archive.name.toLocaleLowerCase("zh-CN"))
@@ -1270,8 +1319,18 @@ window.addEventListener("hashchange", handleIncomingSharedRoster);
 swapButton.addEventListener("click", toggleSwapMode);
 exportImageButton.addEventListener("click", exportResultImage);
 copyButton.addEventListener("click", copyResult);
+loadCloudRosterButton.addEventListener("click", () => {
+  if (!cloudRoster) {
+    return;
+  }
+
+  applyRosterToForm(cloudRoster.players, cloudRoster.name);
+  formMessage.textContent = `已载入云端名单「${cloudRoster.name}」`;
+  showToast("云端名单已载入");
+});
 
 savedRosters = loadSavedRosters();
 restoreNames();
 updateFormState();
 handleIncomingSharedRoster();
+loadCloudRoster();
