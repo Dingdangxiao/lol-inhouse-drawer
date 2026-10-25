@@ -13,6 +13,8 @@ const emptyState = document.querySelector("#emptyState");
 const teamsGrid = document.querySelector("#teamsGrid");
 const blueRoster = document.querySelector("#blueRoster");
 const redRoster = document.querySelector("#redRoster");
+const swapButton = document.querySelector("#swapButton");
+const exportImageButton = document.querySelector("#exportImageButton");
 const copyButton = document.querySelector("#copyButton");
 const resultFooter = document.querySelector("#resultFooter");
 const resultMeta = document.querySelector("#resultMeta");
@@ -36,6 +38,7 @@ const shareDialog = document.querySelector("#shareDialog");
 const shareArchiveName = document.querySelector("#shareArchiveName");
 const shareArchivePlayers = document.querySelector("#shareArchivePlayers");
 const shareLinkInput = document.querySelector("#shareLinkInput");
+const shareQrImage = document.querySelector("#shareQrImage");
 const copyShareLinkButton = document.querySelector("#copyShareLinkButton");
 const closeShareDialogButton = document.querySelector("#closeShareDialogButton");
 const shareImportDialog = document.querySelector("#shareImportDialog");
@@ -50,6 +53,8 @@ let lastSplit = "";
 let currentResult = null;
 let drawing = false;
 let toastTimer = null;
+let swapMode = false;
+let selectedSwapPlayer = null;
 let savedRosters = [];
 let activeArchiveId = "";
 let editingArchiveId = "";
@@ -102,6 +107,17 @@ function buildShareLink(archive) {
     p: archive.players,
   })}`;
   return url.href;
+}
+
+function renderShareQrCode(link) {
+  try {
+    const qr = window.qrcode(0, "M");
+    qr.addData(link);
+    qr.make();
+    shareQrImage.src = qr.createDataURL(6, 0);
+  } catch {
+    shareQrImage.removeAttribute("src");
+  }
 }
 
 function readSharedArchiveFromHash() {
@@ -284,7 +300,7 @@ function validateNames() {
   return names;
 }
 
-function createRosterItem(name, index) {
+function createRosterItem(name, index, team) {
   const item = document.createElement("li");
   const number = document.createElement("span");
   const label = document.createElement("span");
@@ -296,9 +312,85 @@ function createRosterItem(name, index) {
   label.textContent = name;
   gem.className = "roster-gem";
   gem.setAttribute("aria-hidden", "true");
+  item.dataset.team = team;
+  item.dataset.player = name;
+  item.classList.toggle("is-swappable", swapMode);
+  item.addEventListener("click", () => selectSwapPlayer(team, name));
 
   item.append(number, label, gem);
   return item;
+}
+
+function applySwapSelection() {
+  document.querySelectorAll(".team-roster li").forEach((item) => {
+    const isSelected =
+      selectedSwapPlayer &&
+      item.dataset.team === selectedSwapPlayer.team &&
+      item.dataset.player === selectedSwapPlayer.name;
+
+    item.classList.toggle("is-swappable", swapMode);
+    item.classList.toggle("is-selected", Boolean(isSelected));
+  });
+}
+
+function selectSwapPlayer(team, name) {
+  if (!swapMode || !currentResult) {
+    return;
+  }
+
+  if (
+    selectedSwapPlayer &&
+    selectedSwapPlayer.team === team &&
+    selectedSwapPlayer.name === name
+  ) {
+    selectedSwapPlayer = null;
+    applySwapSelection();
+    resultMeta.textContent = "交换模式：选择蓝方一名玩家";
+    return;
+  }
+
+  if (!selectedSwapPlayer) {
+    selectedSwapPlayer = { team, name };
+    applySwapSelection();
+    resultMeta.textContent = `已选 ${name}，再选择另一队玩家交换`;
+    return;
+  }
+
+  if (selectedSwapPlayer.team === team) {
+    selectedSwapPlayer = { team, name };
+    applySwapSelection();
+    resultMeta.textContent = `已选 ${name}，再选择另一队玩家交换`;
+    return;
+  }
+
+  const first = selectedSwapPlayer;
+  const firstIndex = currentResult[first.team].indexOf(first.name);
+  const secondIndex = currentResult[team].indexOf(name);
+  [currentResult[first.team][firstIndex], currentResult[team][secondIndex]] = [
+    currentResult[team][secondIndex],
+    currentResult[first.team][firstIndex],
+  ];
+  selectedSwapPlayer = null;
+  renderResult(currentResult, currentResult.drawnAt);
+  showToast(`已交换 ${first.name} 与 ${name}`);
+}
+
+function toggleSwapMode() {
+  if (!currentResult) {
+    return;
+  }
+
+  swapMode = !swapMode;
+  selectedSwapPlayer = null;
+  swapButton.classList.toggle("is-active", swapMode);
+  swapButton.querySelector("span").textContent = swapMode ? "退出交换" : "交换";
+  applySwapSelection();
+
+  if (swapMode) {
+    resultMeta.textContent = "交换模式：选择蓝方一名玩家";
+  } else {
+    resultMeta.textContent = `生成于 ${formatDrawTime(currentResult.drawnAt)}`;
+  }
 }
 
 function formatDrawTime(date) {
@@ -322,10 +414,10 @@ function renderResult(split, drawnAt) {
   };
 
   blueRoster.replaceChildren(
-    ...split.blue.map((name, index) => createRosterItem(name, index))
+    ...split.blue.map((name, index) => createRosterItem(name, index, "blue"))
   );
   redRoster.replaceChildren(
-    ...split.red.map((name, index) => createRosterItem(name, index))
+    ...split.red.map((name, index) => createRosterItem(name, index, "red"))
   );
 
   emptyState.hidden = true;
@@ -335,8 +427,14 @@ function renderResult(split, drawnAt) {
   teamsGrid.classList.add("is-revealing");
 
   copyButton.disabled = false;
+  swapButton.disabled = false;
+  exportImageButton.disabled = false;
+  selectedSwapPlayer = null;
+  applySwapSelection();
   resultFooter.classList.add("is-ready");
-  resultMeta.textContent = `生成于 ${formatDrawTime(drawnAt)}`;
+  resultMeta.textContent = swapMode
+    ? "交换模式：选择蓝方一名玩家"
+    : `生成于 ${formatDrawTime(drawnAt)}`;
   resultCode.textContent = currentResult.code;
   resultCode.hidden = false;
 }
@@ -351,6 +449,12 @@ function resetResult() {
   teamsGrid.hidden = true;
   teamsGrid.classList.remove("is-revealing");
   copyButton.disabled = true;
+  swapButton.disabled = true;
+  exportImageButton.disabled = true;
+  swapButton.classList.remove("is-active");
+  swapButton.querySelector("span").textContent = "交换";
+  swapMode = false;
+  selectedSwapPlayer = null;
   resultFooter.classList.remove("is-ready");
   resultMeta.textContent = "名单已更新，重新分队后生成对阵";
   resultCode.hidden = true;
@@ -578,7 +682,9 @@ function openShareDialog(archiveId) {
 
   shareArchiveName.textContent = archive.name;
   shareArchivePlayers.textContent = archive.players.join(" · ");
-  shareLinkInput.value = buildShareLink(archive);
+  const link = buildShareLink(archive);
+  shareLinkInput.value = link;
+  renderShareQrCode(link);
   shareDialog.showModal();
 
   window.requestAnimationFrame(() => {
@@ -933,6 +1039,133 @@ async function copyShareLink() {
   showToast(copied ? "分享链接已复制" : "复制失败，请手动选择链接");
 }
 
+function roundedRect(context, x, y, width, height, radius) {
+  context.beginPath();
+  context.moveTo(x + radius, y);
+  context.lineTo(x + width - radius, y);
+  context.quadraticCurveTo(x + width, y, x + width, y + radius);
+  context.lineTo(x + width, y + height - radius);
+  context.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  context.lineTo(x + radius, y + height);
+  context.quadraticCurveTo(x, y + height, x, y + height - radius);
+  context.lineTo(x, y + radius);
+  context.quadraticCurveTo(x, y, x + radius, y);
+  context.closePath();
+}
+
+function createResultImageCanvas(result) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1080;
+  canvas.height = 720;
+  const context = canvas.getContext("2d");
+
+  context.fillStyle = "#0b0d11";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  context.strokeStyle = "rgba(255, 255, 255, 0.035)";
+  context.lineWidth = 1;
+  for (let x = 0; x < canvas.width; x += 48) {
+    context.beginPath();
+    context.moveTo(x, 0);
+    context.lineTo(x, canvas.height);
+    context.stroke();
+  }
+  for (let y = 0; y < canvas.height; y += 48) {
+    context.beginPath();
+    context.moveTo(0, y);
+    context.lineTo(canvas.width, y);
+    context.stroke();
+  }
+
+  context.textAlign = "center";
+  context.fillStyle = "#f1ede3";
+  context.font = "700 56px 'Microsoft YaHei', sans-serif";
+  context.fillText("峡谷分队", canvas.width / 2, 86);
+
+  context.fillStyle = "#d4b77c";
+  context.font = "600 20px 'Bahnschrift', 'Microsoft YaHei', sans-serif";
+  context.fillText(`MATCHUP · ${result.code}`, canvas.width / 2, 128);
+
+  const teams = [
+    { key: "blue", name: "蓝方", side: "BLUE SIDE", color: "#57b3cf", x: 70 },
+    { key: "red", name: "红方", side: "RED SIDE", color: "#d36b65", x: 560 },
+  ];
+
+  teams.forEach((team) => {
+    roundedRect(context, team.x, 170, 450, 490, 12);
+    context.fillStyle = "rgba(255, 255, 255, 0.02)";
+    context.fill();
+    context.strokeStyle = team.color;
+    context.globalAlpha = 0.55;
+    context.lineWidth = 2;
+    context.stroke();
+    context.globalAlpha = 1;
+
+    context.fillStyle = team.color;
+    context.font = "600 18px 'Bahnschrift', 'Microsoft YaHei', sans-serif";
+    context.textAlign = "left";
+    context.fillText(team.side, team.x + 28, 216);
+
+    context.fillStyle = "#f1ede3";
+    context.font = "700 40px 'Microsoft YaHei', sans-serif";
+    context.fillText(team.name, team.x + 28, 266);
+
+    context.strokeStyle = "rgba(255, 255, 255, 0.08)";
+    context.beginPath();
+    context.moveTo(team.x + 28, 292);
+    context.lineTo(team.x + 422, 292);
+    context.stroke();
+
+    result[team.key].forEach((player, index) => {
+      const y = 360 + index * 90;
+      context.fillStyle = team.color;
+      context.font = "600 18px 'Bahnschrift', 'Microsoft YaHei', sans-serif";
+      context.fillText(String(index + 1).padStart(2, "0"), team.x + 28, y);
+
+      context.fillStyle = "#f1ede3";
+      context.font = "600 34px 'Microsoft YaHei', sans-serif";
+      let label = player;
+      while (context.measureText(label).width > 340 && label.length > 1) {
+        label = `${label.slice(0, -2)}…`;
+      }
+      context.fillText(label, team.x + 70, y);
+    });
+  });
+
+  context.textAlign = "center";
+  context.fillStyle = "#69707a";
+  context.font = "500 18px 'Bahnschrift', 'Microsoft YaHei', sans-serif";
+  context.fillText(
+    `GENERATED ${formatDrawTime(result.drawnAt)} · 6 PLAYERS`,
+    canvas.width / 2,
+    696
+  );
+
+  return canvas;
+}
+
+function exportResultImage() {
+  if (!currentResult) {
+    return;
+  }
+
+  const canvas = createResultImageCanvas(currentResult);
+  canvas.toBlob((blob) => {
+    if (!blob) {
+      showToast("导出失败，请重试");
+      return;
+    }
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `峡谷分队-${currentResult.code}.png`;
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1500);
+    showToast("分队图片已导出");
+  }, "image/png");
+}
+
 function showToast(message) {
   window.clearTimeout(toastTimer);
   toast.querySelector("span").textContent = message;
@@ -1034,6 +1267,8 @@ shareImportDialog.addEventListener("close", () => {
 
 window.addEventListener("hashchange", handleIncomingSharedRoster);
 
+swapButton.addEventListener("click", toggleSwapMode);
+exportImageButton.addEventListener("click", exportResultImage);
 copyButton.addEventListener("click", copyResult);
 
 savedRosters = loadSavedRosters();
