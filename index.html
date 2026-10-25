@@ -9,8 +9,9 @@
     />
     <meta name="theme-color" content="#0b0d11" />
     <title>峡谷分队 | 六人内战随机分组</title>
-    <link rel="stylesheet" href="styles.css?v=20261025-2" />
-    <script src="app.js?v=20261025-2" defer></script>
+    <link rel="stylesheet" href="styles.css?v=20261025-3" />
+    <script src="qrcode.min.js" defer></script>
+    <script src="app.js?v=20261025-3" defer></script>
   </head>
   <body>
     <div class="page-grain" aria-hidden="true"></div>
@@ -228,19 +229,50 @@
               <p class="eyebrow">MATCHUP / 02</p>
               <h2 id="result-title">本局对阵</h2>
             </div>
-            <button
-              class="copy-button"
-              id="copyButton"
-              type="button"
-              aria-label="复制对阵结果"
-              disabled
-            >
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <rect x="8" y="8" width="13" height="13" rx="2" />
-                <path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" />
-              </svg>
-              <span>复制结果</span>
-            </button>
+            <div class="result-actions">
+              <button
+                class="copy-button"
+                id="swapButton"
+                type="button"
+                aria-label="交换玩家"
+                disabled
+              >
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M8 3 4 7l4 4" />
+                  <path d="M4 7h16" />
+                  <path d="m16 21 4-4-4-4" />
+                  <path d="M20 17H4" />
+                </svg>
+                <span>交换</span>
+              </button>
+              <button
+                class="copy-button"
+                id="exportImageButton"
+                type="button"
+                aria-label="导出分队图片"
+                disabled
+              >
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 3v12" />
+                  <path d="m7 10 5 5 5-5" />
+                  <path d="M5 21h14" />
+                </svg>
+                <span>导出图片</span>
+              </button>
+              <button
+                class="copy-button"
+                id="copyButton"
+                type="button"
+                aria-label="复制对阵结果"
+                disabled
+              >
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <rect x="8" y="8" width="13" height="13" rx="2" />
+                  <path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" />
+                </svg>
+                <span>复制结果</span>
+              </button>
+            </div>
           </div>
 
           <div class="result-stage">
@@ -367,6 +399,10 @@
             </svg>
             <span>复制</span>
           </button>
+        </div>
+
+        <div class="share-qr" aria-hidden="true">
+          <img id="shareQrImage" alt="" />
         </div>
 
         <div class="dialog-actions">
